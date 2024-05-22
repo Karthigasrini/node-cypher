@@ -100,14 +100,14 @@ public class NodeStatisticsTest {
     Assert.assertNotNull(syncBlockChainStr);
     statistics.addTcpInMessage(syncBlockChainMessage);
     statistics.addTcpOutMessage(syncBlockChainMessage);
-    Assert.assertEquals(1, statistics.tronInSyncBlockChain.getTotalCount());
+    Assert.assertEquals(1, statistics.cypherInSyncBlockChain.getTotalCount());
 
     ChainInventoryMessage chainInventoryMessage = new ChainInventoryMessage(new ArrayList<>(), 0L);
     String chainInventoryMessageStr = chainInventoryMessage.toString();
     Assert.assertNotNull(chainInventoryMessageStr);
     statistics.addTcpInMessage(chainInventoryMessage);
     statistics.addTcpOutMessage(chainInventoryMessage);
-    Assert.assertEquals(1, statistics.tronOutBlockChainInventory.getTotalCount());
+    Assert.assertEquals(1, statistics.cypherOutBlockChainInventory.getTotalCount());
 
     InventoryMessage invMsgCyp =
         new InventoryMessage(new ArrayList<>(), Protocol.Inventory.InventoryType.CYP);
@@ -121,7 +121,7 @@ public class NodeStatisticsTest {
     Assert.assertEquals(MessageTypes.BLOCK, invType);
     statistics.addTcpInMessage(invMsgBlock);
     statistics.addTcpOutMessage(invMsgBlock);
-    Assert.assertEquals(1, statistics.tronInBlockInventory.getTotalCount());
+    Assert.assertEquals(1, statistics.cypherInBlockInventory.getTotalCount());
 
     FetchInvDataMessage fetchInvDataCyp =
         new FetchInvDataMessage(new ArrayList<>(), Protocol.Inventory.InventoryType.CYP);
@@ -131,20 +131,20 @@ public class NodeStatisticsTest {
         new FetchInvDataMessage(new ArrayList<>(), Protocol.Inventory.InventoryType.BLOCK);
     statistics.addTcpInMessage(fetchInvDataBlock);
     statistics.addTcpOutMessage(fetchInvDataBlock);
-    Assert.assertEquals(1, statistics.tronInCypFetchInvData.getTotalCount());
+    Assert.assertEquals(1, statistics.cypherInCypFetchInvData.getTotalCount());
 
     TransactionsMessage transactionsMessage =
         new TransactionsMessage(new LinkedList<>());
     statistics.addTcpInMessage(transactionsMessage);
     statistics.addTcpOutMessage(transactionsMessage);
-    Assert.assertEquals(1, statistics.tronInCyps.getTotalCount());
+    Assert.assertEquals(1, statistics.cypherInCyps.getTotalCount());
 
     BlockCapsule blockCapsule = new BlockCapsule(1, Sha256Hash.ZERO_HASH,
         System.currentTimeMillis(), Sha256Hash.ZERO_HASH.getByteString());
     BlockMessage blockMessage = new BlockMessage(blockCapsule);
     statistics.addTcpInMessage(blockMessage);
     statistics.addTcpOutMessage(blockMessage);
-    long inBlockCount = statistics.tronInBlock.getTotalCount();
+    long inBlockCount = statistics.cypherInBlock.getTotalCount();
     Assert.assertEquals(1, inBlockCount);
   }
 }

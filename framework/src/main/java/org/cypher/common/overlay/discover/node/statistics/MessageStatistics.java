@@ -32,42 +32,42 @@ public class MessageStatistics {
   public final MessageCount p2pOutDisconnect = new MessageCount();
 
   //tcp cypher
-  public final MessageCount tronInMessage = new MessageCount();
-  public final MessageCount tronOutMessage = new MessageCount();
+  public final MessageCount cypherInMessage = new MessageCount();
+  public final MessageCount cypherOutMessage = new MessageCount();
 
-  public final MessageCount tronInSyncBlockChain = new MessageCount();
-  public final MessageCount tronOutSyncBlockChain = new MessageCount();
-  public final MessageCount tronInBlockChainInventory = new MessageCount();
-  public final MessageCount tronOutBlockChainInventory = new MessageCount();
+  public final MessageCount cypherInSyncBlockChain = new MessageCount();
+  public final MessageCount cypherOutSyncBlockChain = new MessageCount();
+  public final MessageCount cypherInBlockChainInventory = new MessageCount();
+  public final MessageCount cypherOutBlockChainInventory = new MessageCount();
 
-  public final MessageCount tronInCypInventory = new MessageCount();
-  public final MessageCount tronOutCypInventory = new MessageCount();
-  public final MessageCount tronInCypInventoryElement = new MessageCount();
-  public final MessageCount tronOutCypInventoryElement = new MessageCount();
+  public final MessageCount cypherInCypInventory = new MessageCount();
+  public final MessageCount cypherOutCypInventory = new MessageCount();
+  public final MessageCount cypherInCypInventoryElement = new MessageCount();
+  public final MessageCount cypherOutCypInventoryElement = new MessageCount();
 
-  public final MessageCount tronInBlockInventory = new MessageCount();
-  public final MessageCount tronOutBlockInventory = new MessageCount();
-  public final MessageCount tronInBlockInventoryElement = new MessageCount();
-  public final MessageCount tronOutBlockInventoryElement = new MessageCount();
+  public final MessageCount cypherInBlockInventory = new MessageCount();
+  public final MessageCount cypherOutBlockInventory = new MessageCount();
+  public final MessageCount cypherInBlockInventoryElement = new MessageCount();
+  public final MessageCount cypherOutBlockInventoryElement = new MessageCount();
 
-  public final MessageCount tronInCypFetchInvData = new MessageCount();
-  public final MessageCount tronOutCypFetchInvData = new MessageCount();
-  public final MessageCount tronInCypFetchInvDataElement = new MessageCount();
-  public final MessageCount tronOutCypFetchInvDataElement = new MessageCount();
+  public final MessageCount cypherInCypFetchInvData = new MessageCount();
+  public final MessageCount cypherOutCypFetchInvData = new MessageCount();
+  public final MessageCount cypherInCypFetchInvDataElement = new MessageCount();
+  public final MessageCount cypherOutCypFetchInvDataElement = new MessageCount();
 
-  public final MessageCount tronInBlockFetchInvData = new MessageCount();
-  public final MessageCount tronOutBlockFetchInvData = new MessageCount();
-  public final MessageCount tronInBlockFetchInvDataElement = new MessageCount();
-  public final MessageCount tronOutBlockFetchInvDataElement = new MessageCount();
+  public final MessageCount cypherInBlockFetchInvData = new MessageCount();
+  public final MessageCount cypherOutBlockFetchInvData = new MessageCount();
+  public final MessageCount cypherInBlockFetchInvDataElement = new MessageCount();
+  public final MessageCount cypherOutBlockFetchInvDataElement = new MessageCount();
 
 
-  public final MessageCount tronInCyp = new MessageCount();
-  public final MessageCount tronOutCyp = new MessageCount();
-  public final MessageCount tronInCyps = new MessageCount();
-  public final MessageCount tronOutCyps = new MessageCount();
-  public final MessageCount tronInBlock = new MessageCount();
-  public final MessageCount tronOutBlock = new MessageCount();
-  public final MessageCount tronOutAdvBlock = new MessageCount();
+  public final MessageCount cypherInCyp = new MessageCount();
+  public final MessageCount cypherOutCyp = new MessageCount();
+  public final MessageCount cypherInCyps = new MessageCount();
+  public final MessageCount cypherOutCyps = new MessageCount();
+  public final MessageCount cypherInBlock = new MessageCount();
+  public final MessageCount cypherOutBlock = new MessageCount();
+  public final MessageCount cypherOutAdvBlock = new MessageCount();
 
   public void addUdpInMessage(UdpMessageTypeEnum type) {
     addUdpMessage(type, true);
@@ -123,9 +123,9 @@ public class MessageStatistics {
   private void addTcpMessage(Message msg, boolean flag) {
 
     if (flag) {
-      tronInMessage.add();
+      cypherInMessage.add();
     } else {
-      tronOutMessage.add();
+      cypherOutMessage.add();
     }
 
     switch (msg.getType()) {
@@ -159,58 +159,58 @@ public class MessageStatistics {
         break;
       case SYNC_BLOCK_CHAIN:
         if (flag) {
-          tronInSyncBlockChain.add();
+          cypherInSyncBlockChain.add();
         } else {
-          tronOutSyncBlockChain.add();
+          cypherOutSyncBlockChain.add();
         }
         break;
       case BLOCK_CHAIN_INVENTORY:
         if (flag) {
-          tronInBlockChainInventory.add();
+          cypherInBlockChainInventory.add();
         } else {
-          tronOutBlockChainInventory.add();
+          cypherOutBlockChainInventory.add();
         }
         break;
       case INVENTORY:
         InventoryMessage inventoryMessage = (InventoryMessage) msg;
         int inventorySize = inventoryMessage.getInventory().getIdsCount();
         messageProcess(inventoryMessage.getInvMessageType(),
-                tronInCypInventory,tronInCypInventoryElement,tronInBlockInventory,
-                tronInBlockInventoryElement,tronOutCypInventory,tronOutCypInventoryElement,
-                tronOutBlockInventory,tronOutBlockInventoryElement,
+                cypherInCypInventory,cypherInCypInventoryElement,cypherInBlockInventory,
+                cypherInBlockInventoryElement,cypherOutCypInventory,cypherOutCypInventoryElement,
+                cypherOutBlockInventory,cypherOutBlockInventoryElement,
                 flag, inventorySize);
         break;
       case FETCH_INV_DATA:
         FetchInvDataMessage fetchInvDataMessage = (FetchInvDataMessage) msg;
         int fetchSize = fetchInvDataMessage.getInventory().getIdsCount();
         messageProcess(fetchInvDataMessage.getInvMessageType(),
-                tronInCypFetchInvData,tronInCypFetchInvDataElement,tronInBlockFetchInvData,
-                tronInBlockFetchInvDataElement,tronOutCypFetchInvData,tronOutCypFetchInvDataElement,
-                tronOutBlockFetchInvData,tronOutBlockFetchInvDataElement,
+                cypherInCypFetchInvData,cypherInCypFetchInvDataElement,cypherInBlockFetchInvData,
+                cypherInBlockFetchInvDataElement,cypherOutCypFetchInvData,cypherOutCypFetchInvDataElement,
+                cypherOutBlockFetchInvData,cypherOutBlockFetchInvDataElement,
                 flag, fetchSize);
         break;
       case CYPS:
         TransactionsMessage transactionsMessage = (TransactionsMessage) msg;
         if (flag) {
-          tronInCyps.add();
-          tronInCyp.add(transactionsMessage.getTransactions().getTransactionsCount());
+          cypherInCyps.add();
+          cypherInCyp.add(transactionsMessage.getTransactions().getTransactionsCount());
         } else {
-          tronOutCyps.add();
-          tronOutCyp.add(transactionsMessage.getTransactions().getTransactionsCount());
+          cypherOutCyps.add();
+          cypherOutCyp.add(transactionsMessage.getTransactions().getTransactionsCount());
         }
         break;
       case CYP:
         if (flag) {
-          tronInMessage.add();
+          cypherInMessage.add();
         } else {
-          tronOutMessage.add();
+          cypherOutMessage.add();
         }
         break;
       case BLOCK:
         if (flag) {
-          tronInBlock.add();
+          cypherInBlock.add();
         }
-        tronOutBlock.add();
+        cypherOutBlock.add();
         break;
       default:
         break;

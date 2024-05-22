@@ -20,7 +20,7 @@ import org.cypher.protos.Protocol;
 public class NetMetricManager {
 
   @Autowired
-  private CypherNetDelegate tronNetDelegate;
+  private CypherNetDelegate cypherNetDelegate;
 
   /**
    * get net info.
@@ -35,9 +35,9 @@ public class NetMetricManager {
 
   private void setNetInfo(NetInfo netInfo) {
     //set connection info
-    netInfo.setConnectionCount(tronNetDelegate.getActivePeer().size());
+    netInfo.setConnectionCount(cypherNetDelegate.getActivePeer().size());
     int validConnectionCount = 0;
-    for (PeerConnection peerConnection : tronNetDelegate.getActivePeer()) {
+    for (PeerConnection peerConnection : cypherNetDelegate.getActivePeer()) {
       if (!(peerConnection.isNeedSyncFromUs() || peerConnection.isNeedSyncFromPeer())) {
         validConnectionCount++;
       }

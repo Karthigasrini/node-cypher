@@ -46,7 +46,7 @@ public class FetchInvDataMsgHandler implements CypherMsgHandler {
 
   private static final int MAX_SIZE = 1_000_000;
   @Autowired
-  private CypherNetDelegate tronNetDelegate;
+  private CypherNetDelegate cypherNetDelegate;
   @Autowired
   private SyncService syncService;
   @Autowired
@@ -71,7 +71,7 @@ public class FetchInvDataMsgHandler implements CypherMsgHandler {
       Message message = advService.getMessage(item);
       if (message == null) {
         try {
-          message = tronNetDelegate.getData(hash, type);
+          message = cypherNetDelegate.getData(hash, type);
         } catch (Exception e) {
           logger.error("Fetch item {} failed. reason: {}", item, hash, e.getMessage());
           peer.disconnect(ReasonCode.FETCH_FAIL);
@@ -104,11 +104,11 @@ public class FetchInvDataMsgHandler implements CypherMsgHandler {
 
   private void sendPbftCommitMessage(PeerConnection peer, BlockCapsule blockCapsule) {
     try {
-      if (!tronNetDelegate.allowPBFT() || peer.isSyncFinish()) {
+      if (!cypherNetDelegate.allowPBFT() || peer.isSyncFinish()) {
         return;
       }
       long epoch = 0;
-      PbftSignCapsule pbftSignCapsule = tronNetDelegate
+      PbftSignCapsule pbftSignCapsule = cypherNetDelegate
           .getBlockPbftCommitData(blockCapsule.getNum());
       long maintenanceTimeInterval = consensusDelegate.getDynamicPropertiesStore()
           .getMaintenanceTimeInterval();
@@ -121,7 +121,7 @@ public class FetchInvDataMsgHandler implements CypherMsgHandler {
             (blockCapsule.getTimeStamp() / maintenanceTimeInterval + 1) * maintenanceTimeInterval;
       }
       if (epochCache.getIfPresent(epoch) == null) {
-        PbftSignCapsule srl = tronNetDelegate.getSRLPbftCommitData(epoch);
+        PbftSignCapsule srl = cypherNetDelegate.getSRLPbftCommitData(epoch);
         if (srl != null) {
           epochCache.put(epoch, true);
           peer.sendMessage(new PbftCommitMessage(srl));
@@ -141,7 +141,7 @@ public class FetchInvDataMsgHandler implements CypherMsgHandler {
           throw new P2pException(TypeEnum.BAD_MESSAGE, "not spread inv: {}" + hash);
         }
       }
-      int fetchCount = peer.getNodeStatistics().messageStatistics.tronInCypFetchInvDataElement
+      int fetchCount = peer.getNodeStatistics().messageStatistics.cypherInCypFetchInvDataElement
           .getCount(10);
       int maxCount = advService.getCypCount().getCount(60);
       if (fetchCount > maxCount) {
@@ -156,9 +156,9 @@ public class FetchInvDataMsgHandler implements CypherMsgHandler {
         }
       }
       if (isAdv) {
-        MessageCount tronOutAdvBlock = peer.getNodeStatistics().messageStatistics.tronOutAdvBlock;
-        tronOutAdvBlock.add(fetchInvDataMsg.getHashList().size());
-        int outBlockCountIn1min = tronOutAdvBlock.getCount(60);
+        MessageCount cypherOutAdvBlock = peer.getNodeStatistics().messageStatistics.cypherOutAdvBlock;
+        cypherOutAdvBlock.add(fetchInvDataMsg.getHashList().size());
+        int outBlockCountIn1min = cypherOutAdvBlock.getCount(60);
         int producedBlockIn2min = 120_000 / BLOCK_PRODUCED_INTERVAL;
         if (outBlockCountIn1min > producedBlockIn2min) {
           logger.error("producedBlockIn2min: " + producedBlockIn2min + ", outBlockCountIn1min: "

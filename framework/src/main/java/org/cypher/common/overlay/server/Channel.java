@@ -51,7 +51,7 @@ public class Channel {
   @Autowired
   private P2pHandler p2pHandler;
   @Autowired
-  private CypherNetHandler tronNetHandler;
+  private CypherNetHandler cypherNetHandler;
   @Autowired
   private PbftHandler pbftHandler;
   private ChannelManager channelManager;
@@ -59,7 +59,7 @@ public class Channel {
   private InetSocketAddress inetSocketAddress;
   private Node node;
   private long startTime;
-  private TronState tronState = TronState.INIT;
+  private CypherState cypherState = CypherState.INIT;
   private boolean isActive;
 
   private volatile boolean isDisconnect;
@@ -93,11 +93,11 @@ public class Channel {
     msgQueue.setChannel(this);
     handshakeHandler.setChannel(this, remoteId);
     p2pHandler.setChannel(this);
-    tronNetHandler.setChannel(this);
+    cypherNetHandler.setChannel(this);
     pbftHandler.setChannel(this);
 
     p2pHandler.setMsgQueue(msgQueue);
-    tronNetHandler.setMsgQueue(msgQueue);
+    cypherNetHandler.setMsgQueue(msgQueue);
     pbftHandler.setMsgQueue(msgQueue);
   }
 
@@ -108,10 +108,10 @@ public class Channel {
     msgQueue.activate(ctx);
     ctx.pipeline().addLast("messageCodec", messageCodec);
     ctx.pipeline().addLast("p2p", p2pHandler);
-    ctx.pipeline().addLast("data", tronNetHandler);
+    ctx.pipeline().addLast("data", cypherNetHandler);
     ctx.pipeline().addLast("pbft", pbftHandler);
     setStartTime(msg.getTimestamp());
-    setTronState(TronState.HANDSHAKE_FINISHED);
+    setCypherState(CypherState.HANDSHAKE_FINISHED);
     getNodeStatistics().p2pHandShake.add();
     logger.info("Finish handshake with {}.", ctx.channel().remoteAddress());
   }
@@ -203,9 +203,9 @@ public class Channel {
     this.startTime = startTime;
   }
 
-  public void setTronState(TronState tronState) {
-    this.tronState = tronState;
-    logger.info("Peer {} status change to {}.", inetSocketAddress, tronState);
+  public void setCypherState(CypherState cypherState) {
+    this.cypherState = cypherState;
+    logger.info("Peer {} status change to {}.", inetSocketAddress, cypherState);
   }
 
   public boolean isActive() {
@@ -256,7 +256,7 @@ public class Channel {
     return String.format("%s | %s", inetSocketAddress, getPeerId());
   }
 
-  public enum TronState {
+  public enum CypherState {
     INIT,
     HANDSHAKE_FINISHED,
     START_TO_SYNC,

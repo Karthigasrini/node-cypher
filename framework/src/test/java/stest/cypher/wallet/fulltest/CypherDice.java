@@ -64,19 +64,19 @@ public class CypherDice {
   }
 
   @Test(enabled = true, threadPoolSize = 30, invocationCount = 30)
-  public void tronDice() {
+  public void cypherDice() {
     ECKey ecKey1 = new ECKey(Utils.getRandom());
-    byte[] tronDiceAddress = ecKey1.getAddress();
-    String tronDiceKey = ByteArray.toHexString(ecKey1.getPrivKeyBytes());
+    byte[] cypherDiceAddress = ecKey1.getAddress();
+    String cypherDiceKey = ByteArray.toHexString(ecKey1.getPrivKeyBytes());
     PublicMethed
-        .sendcoin(tronDiceAddress, 100000000000L, fromAddress, testKey002, blockingStubFull);
+        .sendcoin(cypherDiceAddress, 100000000000L, fromAddress, testKey002, blockingStubFull);
     String contractName = "CypherDice";
     String code = Configuration.getByPath("testng.conf")
-        .getString("code.code_CypherDice_tronDice");
+        .getString("code.code_CypherDice_cypherDice");
     String abi = Configuration.getByPath("testng.conf")
-        .getString("abi.abi_CypherDice_tronDice");
+        .getString("abi.abi_CypherDice_cypherDice");
     byte[] contractAddress = PublicMethed.deployContract(contractName, abi, code, "",
-        maxFeeLimit, 1000000000L, 100, null, tronDiceKey, tronDiceAddress, blockingStubFull);
+        maxFeeLimit, 1000000000L, 100, null, cypherDiceKey, cypherDiceAddress, blockingStubFull);
     SmartContract smartContract = PublicMethed.getContract(contractAddress, blockingStubFull);
     try {
       Thread.sleep(10000);
@@ -92,7 +92,7 @@ public class CypherDice {
       String initParmes = "\"" + "10" + "\"";
       txid = PublicMethed.triggerContract(contractAddress,
           "rollDice(uint256)", initParmes, false,
-          1000000, maxFeeLimit, tronDiceAddress, tronDiceKey, blockingStubFull);
+          1000000, maxFeeLimit, cypherDiceAddress, cypherDiceKey, blockingStubFull);
       logger.info(txid);
       txidList.add(txid);
 

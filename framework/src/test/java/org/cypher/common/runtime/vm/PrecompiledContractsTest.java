@@ -59,9 +59,9 @@ public class PrecompiledContractsTest {
       "0000000000000000000000000000000000000000000000000000000000010006");
   private static final DataWord proposalDeleteAddr = new DataWord(
       "0000000000000000000000000000000000000000000000000000000000010007");
-  private static final DataWord convertFromTronBytesAddressAddr = new DataWord(
+  private static final DataWord convertFromCypherBytesAddressAddr = new DataWord(
       "0000000000000000000000000000000000000000000000000000000000010008");
-  private static final DataWord convertFromTronBase58AddressAddr = new DataWord(
+  private static final DataWord convertFromCypherBase58AddressAddr = new DataWord(
       "0000000000000000000000000000000000000000000000000000000000010009");
   private static final String dbPath = "output_PrecompiledContracts_test";
   private static final String ACCOUNT_NAME = "account";
@@ -285,11 +285,11 @@ public class PrecompiledContractsTest {
   }
 
   @Test
-  public void convertFromTronBytesAddressNativeTest() {
+  public void convertFromCypherBytesAddressNativeTest() {
   }
 
   //@Test
-  public void convertFromTronBase58AddressNative() {
+  public void convertFromCypherBase58AddressNative() {
     // 27WnTihwXsqCqpiNedWvtKCZHsLjDt4Hfmf  TestNet address
     DataWord word1 = new DataWord(
         "3237576e54696877587371437170694e65645776744b435a48734c6a44743448");
@@ -300,7 +300,7 @@ public class PrecompiledContractsTest {
     System.arraycopy(word1.getData(), 0, data, 0, word1.getData().length);
     System.arraycopy(Arrays.copyOfRange(word2.getData(), 0, 3), 0,
         data, word1.getData().length, 3);
-    PrecompiledContract contract = createPrecompiledContract(convertFromTronBase58AddressAddr,
+    PrecompiledContract contract = createPrecompiledContract(convertFromCypherBase58AddressAddr,
         WITNESS_ADDRESS);
 
     byte[] solidityAddress = contract.execute(data).getRight();

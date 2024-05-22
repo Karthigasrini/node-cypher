@@ -50,29 +50,29 @@ public class RevokingDbWithCacheOldValueTest {
   @Test
   public synchronized void testReset() {
     revokingDatabase.getStack().clear();
-    TestRevokingTronStore tronDatabase = new TestRevokingTronStore(
-        "testrevokingtronstore-testReset", revokingDatabase);
+    CypherRevokingCypherStore cypherDatabase = new CypherRevokingCypherStore(
+        "cypherrevokingcypherstore-testReset", revokingDatabase);
     ProtoCapsuleTest testProtoCapsule = new ProtoCapsuleTest(("reset").getBytes());
     try (ISession tmpSession = revokingDatabase.buildSession()) {
-      tronDatabase.put(testProtoCapsule.getData(), testProtoCapsule);
+      cypherDatabase.put(testProtoCapsule.getData(), testProtoCapsule);
       tmpSession.commit();
     }
-    Assert.assertTrue(tronDatabase.has(testProtoCapsule.getData()));
-    tronDatabase.reset();
-    Assert.assertFalse(tronDatabase.has(testProtoCapsule.getData()));
-    tronDatabase.reset();
+    Assert.assertTrue(cypherDatabase.has(testProtoCapsule.getData()));
+    cypherDatabase.reset();
+    Assert.assertFalse(cypherDatabase.has(testProtoCapsule.getData()));
+    cypherDatabase.reset();
   }
 
   @Test
   public synchronized void testPop() throws RevokingStoreIllegalStateException {
     revokingDatabase.getStack().clear();
-    TestRevokingTronStore tronDatabase = new TestRevokingTronStore(
-        "testrevokingtronstore-testPop", revokingDatabase);
+    CypherRevokingCypherStore cypherDatabase = new CypherRevokingCypherStore(
+        "cypherrevokingcypherstore-testPop", revokingDatabase);
 
     for (int i = 1; i < 11; i++) {
       ProtoCapsuleTest testProtoCapsule = new ProtoCapsuleTest(("pop" + i).getBytes());
       try (ISession tmpSession = revokingDatabase.buildSession()) {
-        tronDatabase.put(testProtoCapsule.getData(), testProtoCapsule);
+        cypherDatabase.put(testProtoCapsule.getData(), testProtoCapsule);
         Assert.assertEquals(1, revokingDatabase.getActiveDialog());
         tmpSession.commit();
         Assert.assertEquals(i, revokingDatabase.getStack().size());
@@ -85,7 +85,7 @@ public class RevokingDbWithCacheOldValueTest {
       Assert.assertEquals(10 - i, revokingDatabase.getStack().size());
     }
 
-    tronDatabase.close();
+    cypherDatabase.close();
 
     Assert.assertEquals(0, revokingDatabase.getStack().size());
   }
@@ -93,14 +93,14 @@ public class RevokingDbWithCacheOldValueTest {
   @Test
   public synchronized void testUndo() throws RevokingStoreIllegalStateException {
     revokingDatabase.getStack().clear();
-    TestRevokingTronStore tronDatabase = new TestRevokingTronStore(
-        "testrevokingtronstore-testUndo", revokingDatabase);
+    CypherRevokingCypherStore cypherDatabase = new CypherRevokingCypherStore(
+        "cypherrevokingcypherstore-testUndo", revokingDatabase);
 
     ISession dialog = revokingDatabase.buildSession();
     for (int i = 0; i < 10; i++) {
       ProtoCapsuleTest testProtoCapsule = new ProtoCapsuleTest(("undo" + i).getBytes());
       try (ISession tmpSession = revokingDatabase.buildSession()) {
-        tronDatabase.put(testProtoCapsule.getData(), testProtoCapsule);
+        cypherDatabase.put(testProtoCapsule.getData(), testProtoCapsule);
         Assert.assertEquals(2, revokingDatabase.getStack().size());
         tmpSession.merge();
         Assert.assertEquals(1, revokingDatabase.getStack().size());
@@ -116,79 +116,79 @@ public class RevokingDbWithCacheOldValueTest {
     dialog = revokingDatabase.buildSession();
     revokingDatabase.disable();
     ProtoCapsuleTest testProtoCapsule = new ProtoCapsuleTest("del".getBytes());
-    tronDatabase.put(testProtoCapsule.getData(), testProtoCapsule);
+    cypherDatabase.put(testProtoCapsule.getData(), testProtoCapsule);
     revokingDatabase.enable();
 
     try (ISession tmpSession = revokingDatabase.buildSession()) {
-      tronDatabase.put(testProtoCapsule.getData(), new ProtoCapsuleTest("del2".getBytes()));
+      cypherDatabase.put(testProtoCapsule.getData(), new ProtoCapsuleTest("del2".getBytes()));
       tmpSession.merge();
     }
 
     try (ISession tmpSession = revokingDatabase.buildSession()) {
-      tronDatabase.put(testProtoCapsule.getData(), new ProtoCapsuleTest("del22".getBytes()));
+      cypherDatabase.put(testProtoCapsule.getData(), new ProtoCapsuleTest("del22".getBytes()));
       tmpSession.merge();
     }
 
     try (ISession tmpSession = revokingDatabase.buildSession()) {
-      tronDatabase.put(testProtoCapsule.getData(), new ProtoCapsuleTest("del222".getBytes()));
+      cypherDatabase.put(testProtoCapsule.getData(), new ProtoCapsuleTest("del222".getBytes()));
       tmpSession.merge();
     }
 
     try (ISession tmpSession = revokingDatabase.buildSession()) {
-      tronDatabase.delete(testProtoCapsule.getData());
+      cypherDatabase.delete(testProtoCapsule.getData());
       tmpSession.merge();
     }
 
     dialog.destroy();
 
     logger.info(
-        "**********testProtoCapsule:" + tronDatabase.getUnchecked(testProtoCapsule.getData())
+        "**********testProtoCapsule:" + cypherDatabase.getUnchecked(testProtoCapsule.getData())
             .toString());
     Assert.assertArrayEquals("del".getBytes(),
-        tronDatabase.getUnchecked(testProtoCapsule.getData()).getData());
-    Assert.assertEquals(testProtoCapsule, tronDatabase.getUnchecked(testProtoCapsule.getData()));
+        cypherDatabase.getUnchecked(testProtoCapsule.getData()).getData());
+    Assert.assertEquals(testProtoCapsule, cypherDatabase.getUnchecked(testProtoCapsule.getData()));
 
-    tronDatabase.close();
+    cypherDatabase.close();
   }
 
   @Test
   public synchronized void testGetlatestValues() {
     revokingDatabase.getStack().clear();
-    TestRevokingTronStore tronDatabase = new TestRevokingTronStore(
-        "testrevokingtronstore-testGetlatestValues", revokingDatabase);
+    CypherRevokingCypherStore cypherDatabase = new CypherRevokingCypherStore(
+        "cypherrevokingcypherstore-testGetlatestValues", revokingDatabase);
 
     for (int i = 0; i < 10; i++) {
       ProtoCapsuleTest testProtoCapsule = new ProtoCapsuleTest(("getLastestValues" + i).getBytes());
       try (ISession tmpSession = revokingDatabase.buildSession()) {
-        tronDatabase.put(testProtoCapsule.getData(), testProtoCapsule);
+        cypherDatabase.put(testProtoCapsule.getData(), testProtoCapsule);
         tmpSession.commit();
       }
     }
-    Set<ProtoCapsuleTest> result = tronDatabase.getRevokingDB().getlatestValues(5).stream()
+    Set<ProtoCapsuleTest> result = cypherDatabase.getRevokingDB().getlatestValues(5).stream()
         .map(ProtoCapsuleTest::new)
         .collect(Collectors.toSet());
 
     for (int i = 9; i >= 5; i--) {
       Assert.assertTrue(result.contains(new ProtoCapsuleTest(("getLastestValues" + i).getBytes())));
     }
-    tronDatabase.close();
+    cypherDatabase.close();
   }
 
   @Test
   public synchronized void testGetValuesNext() {
     revokingDatabase.getStack().clear();
-    TestRevokingTronStore tronDatabase = new TestRevokingTronStore(
-        "testrevokingtronstore-testGetValuesNext", revokingDatabase);
+    CypherRevokingCypherStore cypherDatabase = new CypherRevokingCypherStore(
+        "cypherrevokingcypherstore-testGetValuesNext", revokingDatabase);
 
     for (int i = 0; i < 10; i++) {
       ProtoCapsuleTest testProtoCapsule = new ProtoCapsuleTest(("getValuesNext" + i).getBytes());
       try (ISession tmpSession = revokingDatabase.buildSession()) {
-        tronDatabase.put(testProtoCapsule.getData(), testProtoCapsule);
+        cypherDatabase.put(testProtoCapsule.getData(), testProtoCapsule);
         tmpSession.commit();
       }
     }
     Set<ProtoCapsuleTest> result =
-        tronDatabase.getRevokingDB().getValuesNext(
+        cypherDatabase.getRevokingDB().getValuesNext(
             new ProtoCapsuleTest("getValuesNext2".getBytes()).getData(), 3)
             .stream()
             .map(ProtoCapsuleTest::new)
@@ -197,72 +197,72 @@ public class RevokingDbWithCacheOldValueTest {
     for (int i = 2; i < 5; i++) {
       Assert.assertTrue(result.contains(new ProtoCapsuleTest(("getValuesNext" + i).getBytes())));
     }
-    tronDatabase.close();
+    cypherDatabase.close();
   }
 
   @Test
   public synchronized void testGetKeysNext() {
     revokingDatabase.getStack().clear();
-    TestRevokingTronStore tronDatabase = new TestRevokingTronStore(
-        "testrevokingtronstore-testGetKeysNext", revokingDatabase);
+    CypherRevokingCypherStore cypherDatabase = new CypherRevokingCypherStore(
+        "cypherrevokingcypherstore-testGetKeysNext", revokingDatabase);
 
     String protoCapsuleStr = "getKeysNext";
     for (int i = 0; i < 10; i++) {
       ProtoCapsuleTest testProtoCapsule = new ProtoCapsuleTest((protoCapsuleStr + i).getBytes());
       try (ISession tmpSession = revokingDatabase.buildSession()) {
-        tronDatabase.put(testProtoCapsule.getData(), testProtoCapsule);
+        cypherDatabase.put(testProtoCapsule.getData(), testProtoCapsule);
         tmpSession.commit();
       }
     }
 
     int start = 2;
     List<byte[]> result =
-        tronDatabase.getRevokingDB().getKeysNext(
+        cypherDatabase.getRevokingDB().getKeysNext(
             new ProtoCapsuleTest((protoCapsuleStr + start).getBytes()).getData(), 3);
 
     for (int i = start; i < 5; i++) {
       Assert.assertArrayEquals(new ProtoCapsuleTest((protoCapsuleStr + i).getBytes()).getData(),
           result.get(i - 2));
     }
-    tronDatabase.close();
+    cypherDatabase.close();
   }
 
   @Test
   public void shutdown() throws RevokingStoreIllegalStateException {
     revokingDatabase.getStack().clear();
-    TestRevokingTronStore tronDatabase = new TestRevokingTronStore(
-        "testrevokingtronstore-shutdown", revokingDatabase);
+    CypherRevokingCypherStore cypherDatabase = new CypherRevokingCypherStore(
+        "cypherrevokingcypherstore-shutdown", revokingDatabase);
 
     List<ProtoCapsuleTest> capsules = new ArrayList<>();
     for (int i = 1; i < 11; i++) {
       revokingDatabase.buildSession();
       ProtoCapsuleTest testProtoCapsule = new ProtoCapsuleTest(("test" + i).getBytes());
       capsules.add(testProtoCapsule);
-      tronDatabase.put(testProtoCapsule.getData(), testProtoCapsule);
+      cypherDatabase.put(testProtoCapsule.getData(), testProtoCapsule);
       Assert.assertEquals(revokingDatabase.getActiveDialog(), i);
       Assert.assertEquals(revokingDatabase.getStack().size(), i);
     }
 
     for (ProtoCapsuleTest capsule : capsules) {
       logger.info(new String(capsule.getData()));
-      Assert.assertEquals(capsule, tronDatabase.getUnchecked(capsule.getData()));
+      Assert.assertEquals(capsule, cypherDatabase.getUnchecked(capsule.getData()));
     }
 
     revokingDatabase.shutdown();
 
     for (ProtoCapsuleTest capsule : capsules) {
-      logger.info(tronDatabase.getUnchecked(capsule.getData()).toString());
-      Assert.assertEquals(null, tronDatabase.getUnchecked(capsule.getData()).getData());
+      logger.info(cypherDatabase.getUnchecked(capsule.getData()).toString());
+      Assert.assertEquals(null, cypherDatabase.getUnchecked(capsule.getData()).getData());
     }
 
     Assert.assertEquals(0, revokingDatabase.getStack().size());
-    tronDatabase.close();
+    cypherDatabase.close();
 
   }
 
-  private static class TestRevokingTronStore extends CypherStoreWithRevoking<ProtoCapsuleTest> {
+  private static class CypherRevokingCypherStore extends CypherStoreWithRevoking<ProtoCapsuleTest> {
 
-    protected TestRevokingTronStore(String dbName, RevokingDatabase revokingDatabase) {
+    protected CypherRevokingCypherStore(String dbName, RevokingDatabase revokingDatabase) {
       super(dbName, revokingDatabase);
     }
 

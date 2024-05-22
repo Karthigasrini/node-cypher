@@ -566,7 +566,7 @@ public class ContractTrc1155 {
         PublicMethed.sendcoin(
             ownerAddressByte, 500000000000L, fromAddress, testKey002, blockingStubFull));
     PublicMethed.waitProduceNextBlock(blockingStubFull);
-    String contractName = "TronCoins";
+    String contractName = "CypherCoins";
     String filePath = "./src/test/resources/soliditycode/contractTrc1155.sol";
     HashMap retMap = PublicMethed.getBycodeAbi(filePath, contractName);
 

@@ -33,7 +33,7 @@ public class TransactionsMsgHandler implements CypherMsgHandler {
   private static int MAX_CYP_SIZE = 50_000;
   private static int MAX_SMART_CONTRACT_SUBMIT_SIZE = 100;
   @Autowired
-  private CypherNetDelegate tronNetDelegate;
+  private CypherNetDelegate cypherNetDelegate;
   @Autowired
   private AdvService advService;
 
@@ -114,7 +114,7 @@ public class TransactionsMsgHandler implements CypherMsgHandler {
     }
 
     try {
-      tronNetDelegate.pushTransaction(cyp.getTransactionCapsule());
+      cypherNetDelegate.pushTransaction(cyp.getTransactionCapsule());
       advService.broadcast(cyp);
     } catch (P2pException e) {
       logger.warn("Cyp {} from peer {} process failed. type: {}, reason: {}",

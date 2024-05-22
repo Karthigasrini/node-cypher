@@ -15,7 +15,7 @@ import org.cypher.protos.Protocol.ReasonCode;
 public class PeerStatusCheck {
 
   @Autowired
-  private CypherNetDelegate tronNetDelegate;
+  private CypherNetDelegate cypherNetDelegate;
 
   private ScheduledExecutorService peerStatusCheckExecutor = Executors
       .newSingleThreadScheduledExecutor();
@@ -40,7 +40,7 @@ public class PeerStatusCheck {
 
     long now = System.currentTimeMillis();
 
-    tronNetDelegate.getActivePeer().forEach(peer -> {
+    cypherNetDelegate.getActivePeer().forEach(peer -> {
 
       boolean isDisconnected = false;
 

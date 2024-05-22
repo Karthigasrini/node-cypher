@@ -20,14 +20,14 @@ import org.cypher.core.Constant;
 import org.cypher.core.capsule.ProtoCapsule;
 import org.cypher.core.config.DefaultConfig;
 import org.cypher.core.config.args.Args;
-import org.cypher.core.db2.RevokingDbWithCacheNewValueTest.TestRevokingTronStore;
+import org.cypher.core.db2.RevokingDbWithCacheNewValueTest.CypherRevokingCypherStore;
 import org.cypher.core.db2.core.Snapshot;
 import org.cypher.core.db2.core.SnapshotManager;
 import org.cypher.core.db2.core.SnapshotRoot;
 
 public class SnapshotRootTest {
 
-  private TestRevokingTronStore tronDatabase;
+  private CypherRevokingCypherStore cypherDatabase;
   private CypherApplicationContext context;
   private Application appT;
   private SnapshotManager revokingDatabase;
@@ -49,46 +49,46 @@ public class SnapshotRootTest {
   @Test
   public synchronized void testRemove() {
     ProtoCapsuleTest testProtoCapsule = new ProtoCapsuleTest("test".getBytes());
-    tronDatabase = new TestRevokingTronStore("testSnapshotRoot-testRemove");
-    tronDatabase.put("test".getBytes(), testProtoCapsule);
-    Assert.assertEquals(testProtoCapsule, tronDatabase.get("test".getBytes()));
+    cypherDatabase = new CypherRevokingCypherStore("testSnapshotRoot-testRemove");
+    cypherDatabase.put("test".getBytes(), testProtoCapsule);
+    Assert.assertEquals(testProtoCapsule, cypherDatabase.get("test".getBytes()));
 
-    tronDatabase.delete("test".getBytes());
-    Assert.assertEquals(null, tronDatabase.get("test".getBytes()));
-    tronDatabase.close();
+    cypherDatabase.delete("test".getBytes());
+    Assert.assertEquals(null, cypherDatabase.get("test".getBytes()));
+    cypherDatabase.close();
   }
 
   @Test
   public synchronized void testMerge() {
-    tronDatabase = new TestRevokingTronStore("testSnapshotRoot-testMerge");
+    cypherDatabase = new CypherRevokingCypherStore("testSnapshotRoot-testMerge");
     revokingDatabase = context.getBean(SnapshotManager.class);
     revokingDatabase.enable();
-    revokingDatabase.add(tronDatabase.getRevokingDB());
+    revokingDatabase.add(cypherDatabase.getRevokingDB());
 
     SessionOptional dialog = SessionOptional.instance().setValue(revokingDatabase.buildSession());
     ProtoCapsuleTest testProtoCapsule = new ProtoCapsuleTest("merge".getBytes());
-    tronDatabase.put(testProtoCapsule.getData(), testProtoCapsule);
+    cypherDatabase.put(testProtoCapsule.getData(), testProtoCapsule);
     revokingDatabase.getDbs().forEach(db -> db.getHead().getRoot().merge(db.getHead()));
     dialog.reset();
-    Assert.assertEquals(tronDatabase.get(testProtoCapsule.getData()), testProtoCapsule);
+    Assert.assertEquals(cypherDatabase.get(testProtoCapsule.getData()), testProtoCapsule);
 
-    tronDatabase.close();
+    cypherDatabase.close();
   }
 
   @Test
   public synchronized void testMergeList() {
-    tronDatabase = new TestRevokingTronStore("testSnapshotRoot-testMergeList");
+    cypherDatabase = new CypherRevokingCypherStore("testSnapshotRoot-testMergeList");
     revokingDatabase = context.getBean(SnapshotManager.class);
     revokingDatabase.enable();
-    revokingDatabase.add(tronDatabase.getRevokingDB());
+    revokingDatabase.add(cypherDatabase.getRevokingDB());
 
     SessionOptional.instance().setValue(revokingDatabase.buildSession());
     ProtoCapsuleTest testProtoCapsule = new ProtoCapsuleTest("test".getBytes());
-    tronDatabase.put("merge".getBytes(), testProtoCapsule);
+    cypherDatabase.put("merge".getBytes(), testProtoCapsule);
     for (int i = 1; i < 11; i++) {
       ProtoCapsuleTest tmpProtoCapsule = new ProtoCapsuleTest(("mergeList" + i).getBytes());
       try (ISession tmpSession = revokingDatabase.buildSession()) {
-        tronDatabase.put(tmpProtoCapsule.getData(), tmpProtoCapsule);
+        cypherDatabase.put(tmpProtoCapsule.getData(), tmpProtoCapsule);
         tmpSession.commit();
       }
     }
@@ -105,12 +105,12 @@ public class SnapshotRootTest {
 
       for (int i = 1; i < 11; i++) {
         ProtoCapsuleTest tmpProtoCapsule = new ProtoCapsuleTest(("mergeList" + i).getBytes());
-        Assert.assertEquals(tmpProtoCapsule, tronDatabase.get(tmpProtoCapsule.getData()));
+        Assert.assertEquals(tmpProtoCapsule, cypherDatabase.get(tmpProtoCapsule.getData()));
       }
 
     });
     revokingDatabase.updateSolidity(10);
-    tronDatabase.close();
+    cypherDatabase.close();
   }
 
   @NoArgsConstructor

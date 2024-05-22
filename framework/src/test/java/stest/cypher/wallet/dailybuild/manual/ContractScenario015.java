@@ -65,7 +65,7 @@ public class ContractScenario015 {
   }
 
   @Test(enabled = true, description = "CYPHER TRC20 transfer token")
-  public void trc20Tron() {
+  public void trc20Cypher() {
     ecKey1 = new ECKey(Utils.getRandom());
     contract014Address = ecKey1.getAddress();
     contract014Key = ByteArray.toHexString(ecKey1.getPrivKeyBytes());
@@ -82,9 +82,9 @@ public class ContractScenario015 {
     //Deploy contract1, contract1 has a function to transaction 5 sun to target account
     String contractName = "CYPHER TRC20";
     String code = Configuration.getByPath("testng.conf")
-        .getString("code.code_Scenario015_TRC20_TRON");
+        .getString("code.code_Scenario015_TRC20_CYPHER");
     String abi = Configuration.getByPath("testng.conf")
-        .getString("abi.abi_Scenario015_TRC20_TRON");
+        .getString("abi.abi_Scenario015_TRC20_CYPHER");
     txid = PublicMethed.deployContractAndGetTransactionInfoById(contractName, abi, code, "",
         maxFeeLimit, 0L, 100, null, contract014Key, contract014Address, blockingStubFull);
     PublicMethed.waitProduceNextBlock(blockingStubFull);

@@ -52,10 +52,10 @@ public class MarketPairPriceToOrderStoreWithCacheOldValueTest {
   @Test
   public synchronized void testGetKeysNext() {
     revokingDatabase.getStack().clear();
-    String dbName = "testrevokingtronstore-testGetKeysNext";
+    String dbName = "cypherrevokingcypherstore-testGetKeysNext";
     Options options = StorageUtils.getOptionsByDbName(dbName);
     options.comparator(new MarketOrderPriceComparatorForLevelDB());
-    TestRevokingTronStore tronDatabase = new TestRevokingTronStore(dbName, options,
+    CypherRevokingCypherStore cypherDatabase = new CypherRevokingCypherStore(dbName, options,
         revokingDatabase);
 
     // put order: 2 1 3 0
@@ -103,13 +103,13 @@ public class MarketPairPriceToOrderStoreWithCacheOldValueTest {
         ByteArray.fromLong(3));
 
     // put: 2 1 0 3
-    Assert.assertFalse(tronDatabase.has(pairPriceKey2));
-    tronDatabase.put(pairPriceKey2, capsule2);
+    Assert.assertFalse(cypherDatabase.has(pairPriceKey2));
+    cypherDatabase.put(pairPriceKey2, capsule2);
 
     try {
       Assert
           .assertArrayEquals(capsule2.getData(),
-              tronDatabase.get(pairPriceKey2).getData());
+              cypherDatabase.get(pairPriceKey2).getData());
     } catch (ItemNotFoundException | BadItemException e) {
       Assert.fail();
     }
@@ -117,66 +117,66 @@ public class MarketPairPriceToOrderStoreWithCacheOldValueTest {
     // pairPriceKey1 and pairPriceKey2 has the same value,
     // After put pairPriceKey2, pairPriceKey2 will be replaced by pairPriceKey1, both key and value.
     // But you can still get(pairPriceKey2) return pairPriceKey1's value
-    Assert.assertTrue(tronDatabase.has(pairPriceKey1));
-    tronDatabase.put(pairPriceKey1, capsule1);
-    Assert.assertEquals(1, tronDatabase.size());
+    Assert.assertTrue(cypherDatabase.has(pairPriceKey1));
+    cypherDatabase.put(pairPriceKey1, capsule1);
+    Assert.assertEquals(1, cypherDatabase.size());
 
     try {
       Assert
           .assertArrayEquals(capsule1.getData(),
-              tronDatabase.get(pairPriceKey1).getData());
+              cypherDatabase.get(pairPriceKey1).getData());
       Assert
           .assertArrayEquals(capsule1.getData(),
-              tronDatabase.get(pairPriceKey2).getData());
+              cypherDatabase.get(pairPriceKey2).getData());
     } catch (ItemNotFoundException | BadItemException e) {
       Assert.fail();
     }
 
-    Assert.assertFalse(tronDatabase.has(pairPriceKey0));
-    if (!tronDatabase.has(pairPriceKey0)) {
-      tronDatabase.put(pairPriceKey0, capsule0);
+    Assert.assertFalse(cypherDatabase.has(pairPriceKey0));
+    if (!cypherDatabase.has(pairPriceKey0)) {
+      cypherDatabase.put(pairPriceKey0, capsule0);
     }
 
-    Assert.assertEquals(2, tronDatabase.size());
+    Assert.assertEquals(2, cypherDatabase.size());
 
-    Assert.assertFalse(tronDatabase.has(pairPriceKey3));
-    if (!tronDatabase.has(pairPriceKey3)) {
-      tronDatabase.put(pairPriceKey3, capsule3);
+    Assert.assertFalse(cypherDatabase.has(pairPriceKey3));
+    if (!cypherDatabase.has(pairPriceKey3)) {
+      cypherDatabase.put(pairPriceKey3, capsule3);
     }
 
-    Assert.assertEquals(3, tronDatabase.size());
+    Assert.assertEquals(3, cypherDatabase.size());
 
     // get pairPriceKey1, will get pairPriceKey2's value capsule2
     try {
       Assert
           .assertArrayEquals(capsule0.getData(),
-              tronDatabase.get(pairPriceKey0).getData());
+              cypherDatabase.get(pairPriceKey0).getData());
       Assert
           .assertArrayEquals(capsule1.getData(),
-              tronDatabase.get(pairPriceKey1).getData());
+              cypherDatabase.get(pairPriceKey1).getData());
       Assert
           .assertArrayEquals(capsule1.getData(),
-              tronDatabase.get(pairPriceKey2).getData());
+              cypherDatabase.get(pairPriceKey2).getData());
       Assert
           .assertArrayEquals(capsule3.getData(),
-              tronDatabase.get(pairPriceKey3).getData());
+              cypherDatabase.get(pairPriceKey3).getData());
     } catch (ItemNotFoundException | BadItemException e) {
       Assert.fail();
     }
 
-    List<byte[]> keyList = tronDatabase.getRevokingDB().getKeysNext(pairPriceKey0, 2 + 1);
+    List<byte[]> keyList = cypherDatabase.getRevokingDB().getKeysNext(pairPriceKey0, 2 + 1);
     Assert.assertArrayEquals(pairPriceKey0, keyList.get(0));
     Assert.assertArrayEquals(pairPriceKey1, keyList.get(1));
     Assert.assertArrayEquals(pairPriceKey3, keyList.get(2));
 
 
-    tronDatabase.close();
+    cypherDatabase.close();
   }
 
-  private static class TestRevokingTronStore extends
+  private static class CypherRevokingCypherStore extends
       CypherStoreWithRevoking<MarketOrderIdListCapsule> {
 
-    private TestRevokingTronStore(String dbName, Options options,
+    private CypherRevokingCypherStore(String dbName, Options options,
         RevokingDatabase revokingDatabase) {
       super(dbName, options, revokingDatabase);
     }

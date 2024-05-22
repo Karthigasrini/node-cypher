@@ -22,7 +22,7 @@ import org.cypher.protos.Protocol;
 public class SyncBlockChainMsgHandler implements CypherMsgHandler {
 
   @Autowired
-  private CypherNetDelegate tronNetDelegate;
+  private CypherNetDelegate cypherNetDelegate;
 
   @Override
   public void processMessage(PeerConnection peer, CypherMessage msg) throws P2pException {
@@ -45,7 +45,7 @@ public class SyncBlockChainMsgHandler implements CypherMsgHandler {
       peer.setNeedSyncFromUs(false);
     } else {
       peer.setNeedSyncFromUs(true);
-      remainNum = tronNetDelegate.getHeadBlockId().getNum() - blockIds.peekLast().getNum();
+      remainNum = cypherNetDelegate.getHeadBlockId().getNum() - blockIds.peekLast().getNum();
     }
 
     peer.setLastSyncBlockId(blockIds.peekLast());
@@ -60,11 +60,11 @@ public class SyncBlockChainMsgHandler implements CypherMsgHandler {
     }
 
     BlockId firstId = blockIds.get(0);
-    if (!tronNetDelegate.containBlockInMainChain(firstId)) {
+    if (!cypherNetDelegate.containBlockInMainChain(firstId)) {
       throw new P2pException(TypeEnum.BAD_MESSAGE, "No first block:" + firstId.getString());
     }
 
-    long headNum = tronNetDelegate.getHeadBlockId().getNum();
+    long headNum = cypherNetDelegate.getHeadBlockId().getNum();
     if (firstId.getNum() > headNum) {
       throw new P2pException(TypeEnum.BAD_MESSAGE,
           "First blockNum:" + firstId.getNum() + " gt my head BlockNum:" + headNum);
@@ -82,7 +82,7 @@ public class SyncBlockChainMsgHandler implements CypherMsgHandler {
 
     BlockId unForkId = null;
     for (int i = blockIds.size() - 1; i >= 0; i--) {
-      if (tronNetDelegate.containBlockInMainChain(blockIds.get(i))) {
+      if (cypherNetDelegate.containBlockInMainChain(blockIds.get(i))) {
         unForkId = blockIds.get(i);
         break;
       }
@@ -92,12 +92,12 @@ public class SyncBlockChainMsgHandler implements CypherMsgHandler {
       throw new P2pException(TypeEnum.SYNC_FAILED, "unForkId is null");
     }
 
-    long len = Math.min(tronNetDelegate.getHeadBlockId().getNum(),
+    long len = Math.min(cypherNetDelegate.getHeadBlockId().getNum(),
         unForkId.getNum() + NetConstants.SYNC_FETCH_BATCH_NUM);
 
     LinkedList<BlockId> ids = new LinkedList<>();
     for (long i = unForkId.getNum(); i <= len; i++) {
-      BlockId id = tronNetDelegate.getBlockIdByNum(i);
+      BlockId id = cypherNetDelegate.getBlockIdByNum(i);
       ids.add(id);
     }
     return ids;

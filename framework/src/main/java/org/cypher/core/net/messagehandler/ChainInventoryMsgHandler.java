@@ -25,7 +25,7 @@ import org.cypher.core.net.service.SyncService;
 public class ChainInventoryMsgHandler implements CypherMsgHandler {
 
   @Autowired
-  private CypherNetDelegate tronNetDelegate;
+  private CypherNetDelegate cypherNetDelegate;
 
   @Autowired
   private SyncService syncService;
@@ -43,7 +43,7 @@ public class ChainInventoryMsgHandler implements CypherMsgHandler {
 
     Deque<BlockId> blockIdWeGet = new LinkedList<>(chainInventoryMessage.getBlockIds());
 
-    if (blockIdWeGet.size() == 1 && tronNetDelegate.containBlock(blockIdWeGet.peek())) {
+    if (blockIdWeGet.size() == 1 && cypherNetDelegate.containBlock(blockIdWeGet.peek())) {
       peer.setNeedSyncFromPeer(false);
       return;
     }
@@ -60,8 +60,8 @@ public class ChainInventoryMsgHandler implements CypherMsgHandler {
     peer.setRemainNum(chainInventoryMessage.getRemainNum());
     peer.getSyncBlockToFetch().addAll(blockIdWeGet);
 
-    synchronized (tronNetDelegate.getBlockLock()) {
-      while (!peer.getSyncBlockToFetch().isEmpty() && tronNetDelegate
+    synchronized (cypherNetDelegate.getBlockLock()) {
+      while (!peer.getSyncBlockToFetch().isEmpty() && cypherNetDelegate
           .containBlock(peer.getSyncBlockToFetch().peek())) {
         BlockId blockId = peer.getSyncBlockToFetch().pop();
         peer.setBlockBothHave(blockId);
@@ -110,12 +110,12 @@ public class ChainInventoryMsgHandler implements CypherMsgHandler {
           + ", peer: " + blockIds.get(0).getString());
     }
 
-    if (tronNetDelegate.getHeadBlockId().getNum() > 0) {
+    if (cypherNetDelegate.getHeadBlockId().getNum() > 0) {
       long maxRemainTime =
-          ChainConstant.CLOCK_MAX_DELAY + System.currentTimeMillis() - tronNetDelegate
-              .getBlockTime(tronNetDelegate.getSolidBlockId());
+          ChainConstant.CLOCK_MAX_DELAY + System.currentTimeMillis() - cypherNetDelegate
+              .getBlockTime(cypherNetDelegate.getSolidBlockId());
       long maxFutureNum =
-          maxRemainTime / BLOCK_PRODUCED_INTERVAL + tronNetDelegate.getSolidBlockId().getNum();
+          maxRemainTime / BLOCK_PRODUCED_INTERVAL + cypherNetDelegate.getSolidBlockId().getNum();
       long lastNum = blockIds.get(blockIds.size() - 1).getNum();
       if (lastNum + msg.getRemainNum() > maxFutureNum) {
         throw new P2pException(TypeEnum.BAD_MESSAGE, "lastNum: " + lastNum + " + remainNum: "

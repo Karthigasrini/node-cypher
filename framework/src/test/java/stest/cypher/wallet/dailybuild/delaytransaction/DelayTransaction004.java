@@ -80,11 +80,11 @@ public class DelayTransaction004 {
     //PublicMethed.freezeBalance(smartContractOwnerAddress,10000000L,3,
     //    smartContractOwnerKey,blockingStubFull);
     PublicMethed.waitProduceNextBlock(blockingStubFull);
-    String contractName = "TRONTOKEN";
+    String contractName = "CYPHERTOKEN";
     String code = Configuration.getByPath("testng.conf")
-        .getString("code.code_ContractScenario004_deployErc20TronToken");
+        .getString("code.code_ContractScenario004_deployErc20CypherToken");
     String abi = Configuration.getByPath("testng.conf")
-        .getString("abi.abi_ContractScenario004_deployErc20TronToken");
+        .getString("abi.abi_ContractScenario004_deployErc20CypherToken");
     contractAddress = PublicMethed.deployContract(contractName, abi, code, "", maxFeeLimit,
         0L, 100, 999L, "0", 0, null,
         smartContractOwnerKey, smartContractOwnerAddress, blockingStubFull);

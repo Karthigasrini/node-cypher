@@ -1,8 +1,8 @@
 
 
-contract TronToken {
+contract CypherToken {
 
-    string public name = "Tronix";      //  token name
+    string public name = "Cypher";      //  token name
     string public symbol = "CYP";           //  token symbol
     uint256 public decimals = 6;            //  token digit
 

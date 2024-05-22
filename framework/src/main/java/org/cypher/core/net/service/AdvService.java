@@ -48,7 +48,7 @@ public class AdvService {
   private final int MAX_SPREAD_SIZE = 1_000;
 
   @Autowired
-  private CypherNetDelegate tronNetDelegate;
+  private CypherNetDelegate cypherNetDelegate;
 
   private ConcurrentHashMap<Item, Long> invToFetch = new ConcurrentHashMap<>();
 
@@ -145,7 +145,7 @@ public class AdvService {
 
   public int fastBroadcastTransaction(TransactionMessage msg) {
 
-    List<PeerConnection> peers = tronNetDelegate.getActivePeer().stream()
+    List<PeerConnection> peers = cypherNetDelegate.getActivePeer().stream()
             .filter(peer -> !peer.isNeedSyncFromPeer() && !peer.isNeedSyncFromUs())
             .collect(Collectors.toList());
 
@@ -219,7 +219,7 @@ public class AdvService {
 
   public void fastForward(BlockMessage msg) {
     Item item = new Item(msg.getBlockId(), InventoryType.BLOCK);
-    List<PeerConnection> peers = tronNetDelegate.getActivePeer().stream()
+    List<PeerConnection> peers = cypherNetDelegate.getActivePeer().stream()
         .filter(peer -> !peer.isNeedSyncFromPeer() && !peer.isNeedSyncFromUs())
         .filter(peer -> peer.getAdvInvReceive().getIfPresent(item) == null
             && peer.getAdvInvSpread().getIfPresent(item) == null)
@@ -240,7 +240,7 @@ public class AdvService {
   public void onDisconnect(PeerConnection peer) {
     if (!peer.getAdvInvRequest().isEmpty()) {
       peer.getAdvInvRequest().keySet().forEach(item -> {
-        if (tronNetDelegate.getActivePeer().stream()
+        if (cypherNetDelegate.getActivePeer().stream()
             .anyMatch(p -> !p.equals(peer) && p.getAdvInvReceive().getIfPresent(item) != null)) {
           invToFetch.put(item, System.currentTimeMillis());
         } else {
@@ -255,7 +255,7 @@ public class AdvService {
   }
 
   private void consumerInvToFetch() {
-    Collection<PeerConnection> peers = tronNetDelegate.getActivePeer().stream()
+    Collection<PeerConnection> peers = cypherNetDelegate.getActivePeer().stream()
         .filter(peer -> peer.isIdle())
         .collect(Collectors.toList());
 
@@ -289,7 +289,7 @@ public class AdvService {
 
   private synchronized void consumerInvToSpread() {
 
-    List<PeerConnection> peers = tronNetDelegate.getActivePeer().stream()
+    List<PeerConnection> peers = cypherNetDelegate.getActivePeer().stream()
         .filter(peer -> !peer.isNeedSyncFromPeer() && !peer.isNeedSyncFromUs())
         .collect(Collectors.toList());
 

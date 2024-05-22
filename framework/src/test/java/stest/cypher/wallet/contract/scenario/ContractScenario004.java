@@ -59,7 +59,7 @@ public class ContractScenario004 {
   }
 
   @Test(enabled = true)
-  public void deployErc20TronTokenWithoutData() {
+  public void deployErc20CypherTokenWithoutData() {
     Assert.assertTrue(PublicMethed.sendcoin(contract004Address, 200000000L, fromAddress,
         testKey002, blockingStubFull));
     Assert.assertTrue(PublicMethed.freezeBalanceGetEnergy(contract004Address, 100000000L,
@@ -89,7 +89,7 @@ public class ContractScenario004 {
   }
 
   @Test(enabled = true)
-  public void deployErc20TronTokenWithData() {
+  public void deployErc20CypherTokenWithData() {
     Assert.assertTrue(PublicMethed
         .sendcoin(contract004Address, 200000000L, fromAddress, testKey002, blockingStubFull));
     Assert.assertTrue(PublicMethed.freezeBalanceGetEnergy(contract004Address, 100000000L,

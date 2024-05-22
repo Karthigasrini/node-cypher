@@ -33,7 +33,7 @@ import org.cypher.core.net.service.SyncService;
 public class PeerConnection extends Channel {
 
   @Autowired
-  private CypherNetDelegate tronNetDelegate;
+  private CypherNetDelegate cypherNetDelegate;
 
   @Autowired
   private SyncService syncService;
@@ -129,7 +129,7 @@ public class PeerConnection extends Channel {
       if (peerHeadBlockNum == headBlockNum) {
         needSyncFromUs = false;
       }
-      setTronState(TronState.SYNC_COMPLETED);
+      setCypherState(CypherState.SYNC_COMPLETED);
     }
   }
 

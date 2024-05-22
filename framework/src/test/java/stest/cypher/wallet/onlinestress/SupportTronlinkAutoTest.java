@@ -24,7 +24,7 @@ import stest.cypher.wallet.common.client.utils.PublicMethed;
 import stest.cypher.wallet.common.client.utils.PublicMethedForMutiSign;
 
 @Slf4j
-public class SupportTronlinkAutoTest {
+public class SupportCypherlinkAutoTest {
 
   private final String testKey002
       = "7400E3D0727F8A61041A8E8BF86599FE5597CE19DE451E59AED07D60967A5E25";

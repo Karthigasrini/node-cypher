@@ -18,7 +18,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.cypher.common.overlay.server.Channel.TronState;
+import org.cypher.common.overlay.server.Channel.CypherState;
 import org.cypher.common.utils.Pair;
 import org.cypher.core.capsule.BlockCapsule;
 import org.cypher.core.capsule.BlockCapsule.BlockId;
@@ -39,7 +39,7 @@ import org.cypher.protos.Protocol.ReasonCode;
 public class SyncService {
 
   @Autowired
-  private CypherNetDelegate tronNetDelegate;
+  private CypherNetDelegate cypherNetDelegate;
 
   @Autowired
   private PbftDataSyncHandler pbftDataSyncHandler;
@@ -92,11 +92,11 @@ public class SyncService {
   }
 
   public void startSync(PeerConnection peer) {
-    peer.setTronState(TronState.SYNCING);
+    peer.setCypherState(CypherState.SYNCING);
     peer.setNeedSyncFromPeer(true);
     peer.getSyncBlockToFetch().clear();
     peer.setRemainNum(0);
-    peer.setBlockBothHave(tronNetDelegate.getGenesisBlockId());
+    peer.setBlockBothHave(cypherNetDelegate.getGenesisBlockId());
     syncNext(peer);
   }
 
@@ -147,18 +147,18 @@ public class SyncService {
     List<BlockId> blockIds = new ArrayList<>(peer.getSyncBlockToFetch());
     List<BlockId> forkList = new LinkedList<>();
     LinkedList<BlockId> summary = new LinkedList<>();
-    long syncBeginNumber = tronNetDelegate.getSyncBeginNumber();
+    long syncBeginNumber = cypherNetDelegate.getSyncBeginNumber();
     long low = syncBeginNumber < 0 ? 0 : syncBeginNumber;
     long highNoFork;
     long high;
 
     if (beginBlockId.getNum() == 0) {
-      highNoFork = high = tronNetDelegate.getHeadBlockId().getNum();
+      highNoFork = high = cypherNetDelegate.getHeadBlockId().getNum();
     } else {
-      if (tronNetDelegate.containBlockInMainChain(beginBlockId)) {
+      if (cypherNetDelegate.containBlockInMainChain(beginBlockId)) {
         highNoFork = high = beginBlockId.getNum();
       } else {
-        forkList = tronNetDelegate.getBlockChainHashesOnFork(beginBlockId);
+        forkList = cypherNetDelegate.getBlockChainHashesOnFork(beginBlockId);
         if (forkList.isEmpty()) {
           throw new P2pException(TypeEnum.SYNC_FAILED,
               "can't find blockId: " + beginBlockId.getString());
@@ -181,7 +181,7 @@ public class SyncService {
 
     while (low <= realHigh) {
       if (low <= highNoFork) {
-        summary.offer(tronNetDelegate.getBlockIdByNum(low));
+        summary.offer(cypherNetDelegate.getBlockIdByNum(low));
       } else if (low <= high) {
         summary.offer(forkList.get((int) (low - highNoFork - 1)));
       } else {
@@ -196,7 +196,7 @@ public class SyncService {
   private void startFetchSyncBlock() {
     HashMap<PeerConnection, List<BlockId>> send = new HashMap<>();
 
-    tronNetDelegate.getActivePeer().stream()
+    cypherNetDelegate.getActivePeer().stream()
         .filter(peer -> peer.isNeedSyncFromPeer() && peer.isIdle())
         .forEach(peer -> {
           if (!send.containsKey(peer)) {
@@ -234,7 +234,7 @@ public class SyncService {
 
       isProcessed[0] = false;
 
-      synchronized (tronNetDelegate.getBlockLock()) {
+      synchronized (cypherNetDelegate.getBlockLock()) {
         blockWaitToProcess.forEach((msg, peerConnection) -> {
           if (peerConnection.isDisconnect()) {
             blockWaitToProcess.remove(msg);
@@ -242,7 +242,7 @@ public class SyncService {
             return;
           }
           final boolean[] isFound = {false};
-          tronNetDelegate.getActivePeer().stream()
+          cypherNetDelegate.getActivePeer().stream()
               .filter(peer -> msg.getBlockId().equals(peer.getSyncBlockToFetch().peek()))
               .forEach(peer -> {
                 peer.getSyncBlockToFetch().pop();
@@ -263,14 +263,14 @@ public class SyncService {
     boolean flag = true;
     BlockId blockId = block.getBlockId();
     try {
-      tronNetDelegate.validSignature(block);
-      tronNetDelegate.processBlock(block, true);
+      cypherNetDelegate.validSignature(block);
+      cypherNetDelegate.processBlock(block, true);
       pbftDataSyncHandler.processPBFTCommitData(block);
     } catch (Exception e) {
       logger.error("Process sync block {} failed.", blockId.getString(), e);
       flag = false;
     }
-    for (PeerConnection peer : tronNetDelegate.getActivePeer()) {
+    for (PeerConnection peer : cypherNetDelegate.getActivePeer()) {
       if (peer.getSyncBlockInProcess().remove(blockId)) {
         if (flag) {
           peer.setBlockBothHave(blockId);

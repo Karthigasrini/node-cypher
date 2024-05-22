@@ -255,7 +255,7 @@ public class Wallet {
   @Autowired
   private CypherNetService cypherNetService;
   @Autowired
-  private CypherNetDelegate tronNetDelegate;
+  private CypherNetDelegate cypherNetDelegate;
   @Autowired
   private Manager dbManager;
   @Autowired
@@ -484,14 +484,14 @@ public class Wallet {
     try {
       TransactionMessage message = new TransactionMessage(signedTransaction.toByteArray());
       if (minEffectiveConnection != 0) {
-        if (tronNetDelegate.getActivePeer().isEmpty()) {
+        if (cypherNetDelegate.getActivePeer().isEmpty()) {
           logger.warn("Broadcast transaction {} has failed, no connection.", txID);
           return builder.setResult(false).setCode(response_code.NO_CONNECTION)
               .setMessage(ByteString.copyFromUtf8("No connection."))
               .build();
         }
 
-        int count = (int) tronNetDelegate.getActivePeer().stream()
+        int count = (int) cypherNetDelegate.getActivePeer().stream()
             .filter(p -> !p.isNeedSyncFromUs() && !p.isNeedSyncFromPeer())
             .count();
 

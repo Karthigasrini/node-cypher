@@ -13,7 +13,7 @@ import org.cypher.common.utils.FileUtil;
 import org.cypher.core.Constant;
 import org.cypher.core.config.DefaultConfig;
 import org.cypher.core.config.args.Args;
-import org.cypher.core.db2.RevokingDbWithCacheNewValueTest.TestRevokingTronStore;
+import org.cypher.core.db2.RevokingDbWithCacheNewValueTest.CypherRevokingCypherStore;
 import org.cypher.core.db2.SnapshotRootTest.ProtoCapsuleTest;
 import org.cypher.core.db2.core.SnapshotManager;
 import org.cypher.core.exception.BadItemException;
@@ -25,7 +25,7 @@ public class SnapshotManagerTest {
   private SnapshotManager revokingDatabase;
   private CypherApplicationContext context;
   private Application appT;
-  private TestRevokingTronStore tronDatabase;
+  private CypherRevokingCypherStore cypherDatabase;
 
   @Before
   public void init() {
@@ -35,18 +35,18 @@ public class SnapshotManagerTest {
     appT = ApplicationFactory.create(context);
     revokingDatabase = context.getBean(SnapshotManager.class);
     revokingDatabase.enable();
-    tronDatabase = new TestRevokingTronStore("testSnapshotManager-test");
-    revokingDatabase.add(tronDatabase.getRevokingDB());
+    cypherDatabase = new CypherRevokingCypherStore("testSnapshotManager-test");
+    revokingDatabase.add(cypherDatabase.getRevokingDB());
   }
 
   @After
   public void removeDb() {
     Args.clearParam();
     context.destroy();
-    tronDatabase.close();
+    cypherDatabase.close();
     FileUtil.deleteDir(new File("output_SnapshotManager_test"));
     revokingDatabase.getCheckTmpStore().close();
-    tronDatabase.close();
+    cypherDatabase.close();
   }
 
   @Test
@@ -63,14 +63,14 @@ public class SnapshotManagerTest {
     for (int i = 1; i < 11; i++) {
       ProtoCapsuleTest testProtoCapsule = new ProtoCapsuleTest(("refresh" + i).getBytes());
       try (ISession tmpSession = revokingDatabase.buildSession()) {
-        tronDatabase.put(protoCapsule.getData(), testProtoCapsule);
+        cypherDatabase.put(protoCapsule.getData(), testProtoCapsule);
         tmpSession.commit();
       }
     }
 
     revokingDatabase.flush();
     Assert.assertEquals(new ProtoCapsuleTest("refresh10".getBytes()),
-        tronDatabase.get(protoCapsule.getData()));
+        cypherDatabase.get(protoCapsule.getData()));
   }
 
   @Test
@@ -86,11 +86,11 @@ public class SnapshotManagerTest {
     for (int i = 1; i < 11; i++) {
       ProtoCapsuleTest testProtoCapsule = new ProtoCapsuleTest(("close" + i).getBytes());
       try (ISession tmpSession = revokingDatabase.buildSession()) {
-        tronDatabase.put(protoCapsule.getData(), testProtoCapsule);
+        cypherDatabase.put(protoCapsule.getData(), testProtoCapsule);
       }
     }
     Assert.assertEquals(null,
-        tronDatabase.get(protoCapsule.getData()));
+        cypherDatabase.get(protoCapsule.getData()));
 
   }
 }

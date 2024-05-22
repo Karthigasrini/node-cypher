@@ -28,7 +28,7 @@ import org.cypher.protos.Protocol.Inventory.InventoryType;
 public class BlockMsgHandler implements CypherMsgHandler {
 
   @Autowired
-  private CypherNetDelegate tronNetDelegate;
+  private CypherNetDelegate cypherNetDelegate;
 
   @Autowired
   private AdvService advService;
@@ -59,7 +59,7 @@ public class BlockMsgHandler implements CypherMsgHandler {
     } else {
       Long time = peer.getAdvInvRequest().remove(new Item(blockId, InventoryType.BLOCK));
       long now = System.currentTimeMillis();
-      long interval = blockId.getNum() - tronNetDelegate.getHeadBlockId().getNum();
+      long interval = blockId.getNum() - cypherNetDelegate.getHeadBlockId().getNum();
       processBlock(peer, blockMessage.getBlockCapsule());
       logger.info(
           "Receive block/interval {}/{} from {} fetch/delay {}/{}ms, "
@@ -93,9 +93,9 @@ public class BlockMsgHandler implements CypherMsgHandler {
 
   private void processBlock(PeerConnection peer, BlockCapsule block) throws P2pException {
     BlockId blockId = block.getBlockId();
-    if (!tronNetDelegate.containBlock(block.getParentBlockId())) {
+    if (!cypherNetDelegate.containBlock(block.getParentBlockId())) {
       logger.warn("Get unlink block {} from {}, head is {}.", blockId.getString(),
-          peer.getInetAddress(), tronNetDelegate.getHeadBlockId().getString());
+          peer.getInetAddress(), cypherNetDelegate.getHeadBlockId().getString());
       syncService.startSync(peer);
       return;
     }
@@ -106,24 +106,24 @@ public class BlockMsgHandler implements CypherMsgHandler {
       advService.addInvToCache(item);
     }
 
-    long headNum = tronNetDelegate.getHeadBlockId().getNum();
+    long headNum = cypherNetDelegate.getHeadBlockId().getNum();
     if (block.getNum() < headNum) {
       logger.warn("Receive a low block {}, head {}", blockId.getString(), headNum);
       return;
     }
 
-    boolean flag = tronNetDelegate.validBlock(block);
+    boolean flag = cypherNetDelegate.validBlock(block);
     if (flag) {
       if (fastForward) {
         advService.fastForward(new BlockMessage(block));
-        tronNetDelegate.trustNode(peer);
+        cypherNetDelegate.trustNode(peer);
       } else {
         advService.broadcast(new BlockMessage(block));
       }
     }
 
     try {
-      tronNetDelegate.processBlock(block, false);
+      cypherNetDelegate.processBlock(block, false);
       if (!flag) {
         if (fastForward) {
           advService.fastForward(new BlockMessage(block));
@@ -134,7 +134,7 @@ public class BlockMsgHandler implements CypherMsgHandler {
 
       witnessProductBlockService.validWitnessProductTwoBlock(block);
 
-      tronNetDelegate.getActivePeer().forEach(p -> {
+      cypherNetDelegate.getActivePeer().forEach(p -> {
         if (p.getAdvInvReceive().getIfPresent(blockId) != null) {
           p.setBlockBothHave(blockId);
         }

@@ -45,7 +45,7 @@ public abstract class BaseNet {
 
   private RpcApiService rpcApiService;
   private Application appT;
-  private CypherNetDelegate tronNetDelegate;
+  private CypherNetDelegate cypherNetDelegate;
 
   private ExecutorService executorService = Executors.newFixedThreadPool(1);
 
@@ -98,12 +98,12 @@ public abstract class BaseNet {
         appT.initServices(parameter);
         appT.startServices();
         appT.startup();
-        tronNetDelegate = context.getBean(CypherNetDelegate.class);
+        cypherNetDelegate = context.getBean(CypherNetDelegate.class);
         rpcApiService.blockUntilShutdown();
       }
     });
     int tryTimes = 0;
-    while (++tryTimes < 100 && tronNetDelegate == null) {
+    while (++tryTimes < 100 && cypherNetDelegate == null) {
       Thread.sleep(3000);
     }
   }
@@ -111,7 +111,7 @@ public abstract class BaseNet {
   @After
   public void destroy() {
     Collection<PeerConnection> peerConnections = ReflectUtils
-        .invokeMethod(tronNetDelegate, "getActivePeer");
+        .invokeMethod(cypherNetDelegate, "getActivePeer");
     for (PeerConnection peer : peerConnections) {
       peer.close();
     }

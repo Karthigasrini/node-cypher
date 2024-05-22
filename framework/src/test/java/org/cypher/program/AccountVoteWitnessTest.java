@@ -123,7 +123,7 @@ public class AccountVoteWitnessTest {
 
   private List<AccountCapsule> getAccountList() {
     final List<AccountCapsule> accountCapsuleList = Lists.newArrayList();
-    final AccountCapsule accountTron =
+    final AccountCapsule accountCypher =
         new AccountCapsule(
             ByteString.copyFrom("00000000001".getBytes()),
             ByteString.copyFromUtf8("Cypher"),
@@ -148,26 +148,26 @@ public class AccountVoteWitnessTest {
             ByteString.copyFrom("00000000005".getBytes()),
             ByteString.copyFromUtf8("Vivider"),
             AccountType.Normal);
-    // accountTron addVotes
-    accountTron.addVotes(accountMarcus.getAddress(), 100);
-    accountTron.addVotes(accountOlivier.getAddress(), 100);
-    accountTron.addVotes(accountSasaXie.getAddress(), 100);
-    accountTron.addVotes(accountVivider.getAddress(), 100);
+    // accountCypher addVotes
+    accountCypher.addVotes(accountMarcus.getAddress(), 100);
+    accountCypher.addVotes(accountOlivier.getAddress(), 100);
+    accountCypher.addVotes(accountSasaXie.getAddress(), 100);
+    accountCypher.addVotes(accountVivider.getAddress(), 100);
 
     // accountMarcus addVotes
-    accountMarcus.addVotes(accountTron.getAddress(), 100);
+    accountMarcus.addVotes(accountCypher.getAddress(), 100);
     accountMarcus.addVotes(accountOlivier.getAddress(), 100);
     accountMarcus.addVotes(accountSasaXie.getAddress(), 100);
     accountMarcus.addVotes(ByteString.copyFrom("00000000006".getBytes()), 100);
     accountMarcus.addVotes(ByteString.copyFrom("00000000007".getBytes()), 100);
     // accountOlivier addVotes
-    accountOlivier.addVotes(accountTron.getAddress(), 100);
+    accountOlivier.addVotes(accountCypher.getAddress(), 100);
     accountOlivier.addVotes(accountMarcus.getAddress(), 100);
     accountOlivier.addVotes(accountSasaXie.getAddress(), 100);
     accountOlivier.addVotes(accountVivider.getAddress(), 100);
     // accountSasaXie addVotes
     // accountVivider addVotes
-    accountCapsuleList.add(accountTron);
+    accountCapsuleList.add(accountCypher);
     accountCapsuleList.add(accountMarcus);
     accountCapsuleList.add(accountOlivier);
     accountCapsuleList.add(accountSasaXie);
@@ -177,7 +177,7 @@ public class AccountVoteWitnessTest {
 
   private List<WitnessCapsule> getWitnessList() {
     final List<WitnessCapsule> witnessCapsuleList = Lists.newArrayList();
-    final WitnessCapsule witnessTron =
+    final WitnessCapsule witnessCypher =
         new WitnessCapsule(ByteString.copyFrom("00000000001".getBytes()), 0, "");
     final WitnessCapsule witnessOlivier =
         new WitnessCapsule(ByteString.copyFrom("00000000003".getBytes()), 100, "");
@@ -185,7 +185,7 @@ public class AccountVoteWitnessTest {
         new WitnessCapsule(ByteString.copyFrom("00000000005".getBytes()), 200, "");
     final WitnessCapsule witnessSenaLiu =
         new WitnessCapsule(ByteString.copyFrom("00000000006".getBytes()), 300, "");
-    witnessCapsuleList.add(witnessTron);
+    witnessCapsuleList.add(witnessCypher);
     witnessCapsuleList.add(witnessOlivier);
     witnessCapsuleList.add(witnessVivider);
     witnessCapsuleList.add(witnessSenaLiu);

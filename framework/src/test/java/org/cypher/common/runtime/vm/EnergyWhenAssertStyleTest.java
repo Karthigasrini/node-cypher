@@ -457,7 +457,7 @@ public class EnergyWhenAssertStyleTest {
 
   // pragma solidity ^0.4.0;
   //
-  // contract TronNative{
+  // contract CypherNative{
   //
   //   address public voteContractAddress= 0x10001;
   //

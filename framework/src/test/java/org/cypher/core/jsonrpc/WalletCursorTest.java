@@ -70,24 +70,24 @@ public class WalletCursorTest {
 
   @Test
   public void testSource() {
-    CypherJsonRpcImpl tronJsonRpc = new CypherJsonRpcImpl(nodeInfoService, wallet, dbManager);
+    CypherJsonRpcImpl cypherJsonRpc = new CypherJsonRpcImpl(nodeInfoService, wallet, dbManager);
 
     Assert.assertEquals(Cursor.HEAD, wallet.getCursor());
-    Assert.assertEquals(RequestSource.FULLNODE, tronJsonRpc.getSource());
+    Assert.assertEquals(RequestSource.FULLNODE, cypherJsonRpc.getSource());
 
     dbManager.setCursor(Cursor.HEAD);
     Assert.assertEquals(Cursor.HEAD, wallet.getCursor());
-    Assert.assertEquals(RequestSource.FULLNODE, tronJsonRpc.getSource());
+    Assert.assertEquals(RequestSource.FULLNODE, cypherJsonRpc.getSource());
     dbManager.resetCursor();
 
     dbManager.setCursor(Cursor.SOLIDITY);
     Assert.assertEquals(Cursor.SOLIDITY, wallet.getCursor());
-    Assert.assertEquals(RequestSource.SOLIDITY, tronJsonRpc.getSource());
+    Assert.assertEquals(RequestSource.SOLIDITY, cypherJsonRpc.getSource());
     dbManager.resetCursor();
 
     dbManager.setCursor(Cursor.PBFT);
     Assert.assertEquals(Cursor.PBFT, wallet.getCursor());
-    Assert.assertEquals(RequestSource.PBFT, tronJsonRpc.getSource());
+    Assert.assertEquals(RequestSource.PBFT, cypherJsonRpc.getSource());
     dbManager.resetCursor();
   }
 
@@ -101,9 +101,9 @@ public class WalletCursorTest {
 
     dbManager.setCursor(Cursor.SOLIDITY);
 
-    CypherJsonRpcImpl tronJsonRpc = new CypherJsonRpcImpl(nodeInfoService, wallet, dbManager);
+    CypherJsonRpcImpl cypherJsonRpc = new CypherJsonRpcImpl(nodeInfoService, wallet, dbManager);
     try {
-      tronJsonRpc.buildTransaction(buildArguments);
+      cypherJsonRpc.buildTransaction(buildArguments);
     } catch (Exception e) {
       Assert.assertEquals("the method buildTransaction does not exist/is not available in "
           + "SOLIDITY", e.getMessage());
@@ -122,9 +122,9 @@ public class WalletCursorTest {
 
     dbManager.setCursor(Cursor.PBFT);
 
-    CypherJsonRpcImpl tronJsonRpc = new CypherJsonRpcImpl(nodeInfoService, wallet, dbManager);
+    CypherJsonRpcImpl cypherJsonRpc = new CypherJsonRpcImpl(nodeInfoService, wallet, dbManager);
     try {
-      tronJsonRpc.buildTransaction(buildArguments);
+      cypherJsonRpc.buildTransaction(buildArguments);
     } catch (Exception e) {
       Assert.assertEquals("the method buildTransaction does not exist/is not available in "
           + "PBFT", e.getMessage());
@@ -140,10 +140,10 @@ public class WalletCursorTest {
     buildArguments.to = "0x548794500882809695a8a687866e76d4271a1abc";
     buildArguments.value = "0x1f4";
 
-    CypherJsonRpcImpl tronJsonRpc = new CypherJsonRpcImpl(nodeInfoService, wallet, dbManager);
+    CypherJsonRpcImpl cypherJsonRpc = new CypherJsonRpcImpl(nodeInfoService, wallet, dbManager);
 
     try {
-      tronJsonRpc.buildTransaction(buildArguments);
+      cypherJsonRpc.buildTransaction(buildArguments);
     } catch (Exception e) {
       Assert.fail();
     }

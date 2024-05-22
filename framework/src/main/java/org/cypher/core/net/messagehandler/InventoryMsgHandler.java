@@ -18,7 +18,7 @@ import org.cypher.protos.Protocol.Inventory.InventoryType;
 public class InventoryMsgHandler implements CypherMsgHandler {
 
   @Autowired
-  private CypherNetDelegate tronNetDelegate;
+  private CypherNetDelegate cypherNetDelegate;
 
   @Autowired
   private AdvService advService;
@@ -55,7 +55,7 @@ public class InventoryMsgHandler implements CypherMsgHandler {
     }
 
     if (type.equals(InventoryType.CYP)) {
-      int count = peer.getNodeStatistics().messageStatistics.tronInCypInventoryElement.getCount(10);
+      int count = peer.getNodeStatistics().messageStatistics.cypherInCypInventoryElement.getCount(10);
       if (count > maxCountIn10s) {
         logger.warn("Drop inv: {} size: {} from Peer {}, Inv count: {} is overload.",
             type, size, peer.getInetAddress(), count);
